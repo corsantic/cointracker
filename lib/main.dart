@@ -1,7 +1,11 @@
+import 'package:cointracker/model/listing/data.dart';
 import 'package:cointracker/model/listing/listing_latest.dart';
 import 'package:cointracker/services/listing_service.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
@@ -16,7 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Latest Coins Listed',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -29,7 +33,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Latest Coins Listed'),
     );
   }
 }
@@ -55,6 +59,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late Future<ListingLatest> futureListingLatest;
   ListingService listingService = ListingService();
+  final DateFormat formatter = DateFormat('yyyy-MM-dd HH:MM:SS');
+  var colorChange = false;
   @override
   void initState() {
     super.initState();
@@ -75,22 +81,67 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-          // Center is a layout widget. It takes a single child and positions it
-          // in the middle of the parent.
-          child: FutureBuilder<ListingLatest>(
-        future: futureListingLatest,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return Text("${snapshot.data?.data[0]?.name}");
-          } else if (snapshot.hasError) {
-            return Text('${snapshot.error}');
-          }
+      body: Padding(
+        padding: const EdgeInsets.all(34.0),
+        child: Center(
+            // Center is a layout widget. It takes a single child and positions it
+            // in the middle of the parent.
+            child: FutureBuilder<ListingLatest>(
+          future: futureListingLatest,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                  itemCount: (snapshot.data?.data.length),
+                  itemBuilder: (context, index) {
+                    var data = snapshot.data?.data[index];
+                    return Card(
+                      color: getColor(),
+                      child: ListTile(
+                        leading: Text("${data?.symbol}"),
+                        title: Column(
+                          children: <Widget>[
+                            RichText(
+                                text: TextSpan(children: <TextSpan>[
+                              TextSpan(
+                                text: " ${data?.name}",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    launch(launchUrl(data));
+                                  },
+                              ),
+                            ]))
+                          ],
+                        ),
+                        trailing: Text(formatter
+                            .format(DateTime.parse(data?.dateAdded as String))),
+                      ),
+                    );
+                  });
+              // return Text("${snapshot.data?.data[0]?.name}");
+            } else if (snapshot.hasError) {
+              return Text('${snapshot.error}');
+            }
 
-          // By default, show a loading spinner.
-          return const CircularProgressIndicator();
-        },
-      )),
+            // By default, show a loading spinner.
+            return const CircularProgressIndicator();
+          },
+        )),
+      ),
     );
+  }
+
+  getColor() {
+    colorChange = !colorChange;
+    return colorChange ? Colors.grey[300] : Colors.white;
+  }
+
+  String launchUrl(Data? data) {
+    var stableUrl =
+        "${dotenv.env['COIN_STABLE_URL']}"; //EX: https://coinmarketcap.com/currencies/bitcoin
+
+    var coinMarketCapUrl = "$stableUrl${data?.slug}";
+    return coinMarketCapUrl;
   }
 }

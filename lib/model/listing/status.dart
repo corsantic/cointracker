@@ -5,11 +5,15 @@ part 'status.g.dart';
 @JsonSerializable()
 class Status {
   String? timestamp;
+  @JsonKey(name: "error_code")
   int? errorCode;
+  @JsonKey(name: "error_message")
   String? errorMessage;
   int? elapsed;
+  @JsonKey(name: "credit_count")
   int? creditCount;
   String? notice;
+  @JsonKey(name: "total_count")
   int? totalCount;
 
   Status(

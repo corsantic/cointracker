@@ -8,20 +8,20 @@ part of 'status.dart';
 
 Status _$StatusFromJson(Map<String, dynamic> json) => Status(
       timestamp: json['timestamp'] as String?,
-      errorCode: json['errorCode'] as int?,
-      errorMessage: json['errorMessage'] as String?,
+      errorCode: json['error_code'] as int?,
+      errorMessage: json['error_message'] as String?,
       elapsed: json['elapsed'] as int?,
-      creditCount: json['creditCount'] as int?,
+      creditCount: json['credit_count'] as int?,
       notice: json['notice'] as String?,
-      totalCount: json['totalCount'] as int?,
+      totalCount: json['total_count'] as int?,
     );
 
 Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
       'timestamp': instance.timestamp,
-      'errorCode': instance.errorCode,
-      'errorMessage': instance.errorMessage,
+      'error_code': instance.errorCode,
+      'error_message': instance.errorMessage,
       'elapsed': instance.elapsed,
-      'creditCount': instance.creditCount,
+      'credit_count': instance.creditCount,
       'notice': instance.notice,
-      'totalCount': instance.totalCount,
+      'total_count': instance.totalCount,
     };

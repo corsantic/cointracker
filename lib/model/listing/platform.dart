@@ -8,6 +8,7 @@ class Platform {
   String? name;
   String? symbol;
   String? slug;
+  @JsonKey(name: "token_address")
   String? tokenAddress;
 
   Platform({this.id, this.name, this.symbol, this.slug, this.tokenAddress});

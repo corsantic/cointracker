@@ -11,14 +11,21 @@ class Data {
   String? name;
   String? symbol;
   String? slug;
+  @JsonKey(name: "num_market_pairs")
   int? numMarketPairs;
+  @JsonKey(name: "date_added")
   String? dateAdded;
   List<String>? tags;
-  String? maxSupply;
+  @JsonKey(name: "max_supply")
+  int? maxSupply;
+  @JsonKey(name: "circulating_supply")
   int? circulatingSupply;
-  int? totalSupply;
+  @JsonKey(name: "total_supply")
+  double? totalSupply;
   Platform? platform;
+  @JsonKey(name: "cmc_rank")
   int? cmcRank;
+  @JsonKey(name: "last_updated")
   String? lastUpdated;
   Quote? quote;
 
